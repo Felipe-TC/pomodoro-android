@@ -1,6 +1,7 @@
 package com.felipe.pomodoroapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -20,6 +21,44 @@ import kotlinx.coroutines.delay
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // ======== PRUEBA DE TU CLASE Fraccion ========
+        // Esto se ejecuta ANTES de crear la interfaz
+        try {
+            Log.d("FRACCION_TEST", "=== Iniciando pruebas ===")
+
+            // Test 1: Crear fracciones
+            val f1 = Fraccion(1, 2)
+            val f2 = Fraccion(1, 3)
+            Log.d("FRACCION_TEST", "f1 = ${f1.toString()}")
+            Log.d("FRACCION_TEST", "f2 = ${f2.toString()}")
+
+            // Test 2: Sumar
+            val suma = f1.suma(f2)
+            Log.d("FRACCION_TEST", "f1 + f2 = ${suma.toString()}")
+
+            // Test 3: Comparar
+            val esMayor = f1.mayorQue(f2)
+            Log.d("FRACCION_TEST", "f1 > f2? $esMayor")
+
+            // Test 4: Desde String (opcional)
+            val f3 = Fraccion.desdeString("3/4")
+            Log.d("FRACCION_TEST", "Desde string '3/4' = ${f3.toString()}")
+
+            // Test 5: Error (denominador cero)
+            try {
+                val fError = Fraccion(1, 0)
+            } catch (e: IllegalArgumentException) {
+                Log.d("FRACCION_TEST", "Correcto! atrapo el error: ${e.message}")
+            }
+
+            Log.d("FRACCION_TEST", "=== Pruebas completadas ===")
+        } catch (e: Exception) {
+            Log.e("FRACCION_TEST", "Error: ${e.message}")
+        }
+        // ======== FIN DE PRUEBAS ========
+
+
         enableEdgeToEdge()
         setContent {
             PomodoroAppTheme {
