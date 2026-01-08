@@ -48,96 +48,139 @@ enum class PomodoroState {
 // ===== NUEVO: Clase que maneja la logica del Pomodoro =====
 class PomodoroTimer {
     // Tiempos en segundos
-    val workTime        = 25 * 60
-    val shortBreakTime  = 5 * 60
-    val longBreakTime   = 15 * 60
+    val trabajoMinutos          = 25
+    val descansoCortoMinutos    = 5
+    val descansoLargoMinutos    = 15
 
-    var currentState by mutableStateOf(PomodoroState.WORK)
-    var timeLeft by mutableStateOf(workTime)
-    var isRunning by mutableStateOf(false)
-    var completedSessions by mutableStateOf(0)
-    var workSessionBeforeLongBreak = 4      // 4 pomodoros antes de descanso largo
-    var currentWorkSessionCount = 0         // Contador de sesiones de trabajo completadas
+    // Convertir a segundos
+    val tiempoTrabajoSegundos       = trabajoMinutos * 60
+    val tiempoDescnsoCortoSegundos  = descansoCortoMinutos * 60
+    val tiempoDescansoLargoSegundos = descansoLargoMinutos * 60
 
-    // Funcion para manejar cuando el tiempo llega a 0
-    private fun onTimerFinished() {
-        isRunning = false
+    // ===== VARIABLES DE ESTADO (var = pueden cambiar) =====
+    var estadoActual by mutableStateOf(PomodoroState.WORK)
+    var tiempoRestante by mutableStateOf(tiempoTrabajoSegundos)
+    var estaCorriendo by mutableStateOf(false)
+    var sesionesCompletadas by mutableStateOf(0)
 
-        when (currentState) {
+    // Contador interno para saber cuando dar descanso largo
+    val sesionesAntesDescansoLargo  = 4
+    var contadorSesionesTrabajo     = 0
+
+    // ===== METODO: Cuando termina el tiempo =====
+    private fun cuandoTerminaTiempo() {
+        // 1. Detener el temporizador
+        estaCorriendo = false
+
+        // 2. Dependiendo del estado actual, hacer algo diferente
+        when (estadoActual) {
             PomodoroState.WORK -> {
-                // Se completo una sesion de trabajo
-                completedSessions = completedSessions + 1
-                currentWorkSessionCount = currentWorkSessionCount + 1
-
-                // Decidir que tipo de descanso sigue
-                if (currentWorkSessionCount >= workSessionBeforeLongBreak) {
-                    // Cambiar a descanso largo y resetear contador
-                    currentState = PomodoroState.LONG_BREAK
-                    currentWorkSessionCount = 0
-                } else {
-                    // Cambiar a descanso corto
-                    currentState = PomodoroState.SHORT_BREAK
-                }
+                manejarFinTrabajo()
             }
 
-            PomodoroState.SHORT_BREAK,
+            PomodoroState.SHORT_BREAK -> {
+                manejarFinDescansoCorto()
+            }
+
             PomodoroState.LONG_BREAK -> {
-                // Termino el descanso, volver al trabajo
-                currentState = PomodoroState.WORK
+                manejarFinDescansoLargo()
             }
+        }
+
+        // 3. Aqui despues agregaremos sonido
+        println("Tiempo terminado! Estado: $estadoActual")
+    }
+
+    // ===== METODO: Manejar cuando termina tiempo de trabajo =====
+    private fun manejarFinTrabajo() {
+        // Aumentar contadores
+        sesionesCompletadas     = sesionesCompletadas + 1
+        contadorSesionesTrabajo = contadorSesionesTrabajo + 1
+
+        //Decidir que tipo de descanso toca
+        val tocaDescansoLargo = contadorSesionesTrabajo >= sesionesAntesDescansoLargo
+
+        if (tocaDescansoLargo) {
+            estadoActual = PomodoroState.LONG_BREAK
+            contadorSesionesTrabajo = 0     // Reiniciar contador
+        } else {
+            estadoActual = PomodoroState.SHORT_BREAK
         }
 
         // Actualizar tiempo para el nuevo estado
-        updateTimeForCurrentState()
-
-        // Aqui despues agregaremos el sonido
-        println("TIMER FINISHED! Estado acutal: $currentState")
+        actualizarTiempoParaEstadoActual()
     }
 
-    //Actualiza el tiempo segun el estado actual
-    private fun updateTimeForCurrentState() {
-        timeLeft = when (currentState) {
-            PomodoroState.WORK -> workTime
-            PomodoroState.SHORT_BREAK -> shortBreakTime
-            PomodoroState.LONG_BREAK -> longBreakTime
+    // ===== METODO: Manejar cuando termina descanso corto =====
+    private fun manejarFinDescansoCorto() {
+        estadoActual = PomodoroState.WORK
+        actualizarTiempoParaEstadoActual()
+    }
+
+    // ===== METODO: Manejar cuando termina descanso largo =====
+    private fun manejarFinDescansoLargo() {
+        estadoActual = PomodoroState.WORK
+        actualizarTiempoParaEstadoActual()
+    }
+
+    // ===== METODO: Actualizar tiempo segun estado =====
+    private fun actualizarTiempoParaEstadoActual() {
+        tiempoRestante = when(estadoActual) {
+            PomodoroState.WORK -> tiempoTrabajoSegundos
+            PomodoroState.SHORT_BREAK -> tiempoDescnsoCortoSegundos
+            PomodoroState.LONG_BREAK -> tiempoDescansoLargoSegundos
         }
     }
 
-    fun toggleTimer() {
-        isRunning = !isRunning
+    // ===== METODO: Iniciar o pausar =====
+    fun alternarTemporizador() {
+        estaCorriendo = !estaCorriendo
     }
 
-    fun resetTimer() {
-        isRunning = false
-        when (currentState) {
-            PomodoroState.WORK -> timeLeft = workTime
-            PomodoroState.SHORT_BREAK -> timeLeft = shortBreakTime
-            PomodoroState.LONG_BREAK -> timeLeft = longBreakTime
+    // ===== METODO: Reiniciar tiempo actual =====
+    fun reiniciarTemporizador() {
+        estaCorriendo = false
+        actualizarTiempoParaEstadoActual()
+    }
+
+    // ===== METODO: Cambiar a trabajo =====
+    fun cambiarATrabajo() {
+        estadoActual = PomodoroState.WORK
+        reiniciarTemporizador()
+    }
+
+    // ===== METODO: Cambiar a descanso corto =====
+    fun cambiarADescansoCorto() {
+        estadoActual = PomodoroState.SHORT_BREAK
+        reiniciarTemporizador()
+    }
+
+    // ===== METODO: Cambiar a descanso largo =====
+    fun cambiarADescansoLargo() {
+        estadoActual = PomodoroState.LONG_BREAK
+        reiniciarTemporizador()
+    }
+
+    // ===== METODO: Actualizar tiempo (se llama cada segundo) =====
+    fun actualizarTiempo() {
+        if (estaCorriendo && tiempoRestante >0) {
+            // Reducir un segundo
+            tiempoRestante = tiempoRestante - 1
+
+            // Si llego a cero, manejar fin
+            if (tiempoRestante == 0) {
+                cuandoTerminaTiempo()
+            }
         }
     }
 
-    fun switchToWork() {
-        currentState = PomodoroState.WORK
-        resetTimer()
-    }
-
-    fun switchToShortBreak() {
-        currentState = PomodoroState.SHORT_BREAK
-        resetTimer()
-    }
-
-    fun switchToLongBreak() {
-        currentState = PomodoroState.LONG_BREAK
-        resetTimer()
-    }
-
-    fun updateTime() {
-        if (isRunning && timeLeft > 0) {
-            timeLeft = timeLeft - 1
-        } else if (timeLeft == 0) {
-            isRunning = false
-            // Aqui ira el sonido despues
-        }
+    // ===== METODO: Reiniciar TODO (contadores tambien) =====
+    fun reiniciarTodo() {
+        estaCorriendo   = false
+        estadoActual    = PomodoroState.WORK
+        sesionesCompletadas = 0
+        contadorSesionesTrabajo = 0
+        actualizarTiempoParaEstadoActual()
     }
 }
 
@@ -147,10 +190,12 @@ fun PomodoroApp() {
     val pomodoroTimer = remember { PomodoroTimer() }
 
     // Esto actualiza el tiempo cada segundo
-    LaunchedEffect(pomodoroTimer.isRunning) {
-        while (pomodoroTimer.isRunning) {
+    LaunchedEffect(pomodoroTimer.estaCorriendo) {
+        while (true) {
             delay(1000L)
-            pomodoroTimer.updateTime()
+            if (pomodoroTimer.estaCorriendo) {
+                pomodoroTimer.actualizarTiempo()
+            }
         }
     }
 
