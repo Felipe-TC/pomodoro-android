@@ -1,7 +1,7 @@
 # PomodoroApp 🍅
 
 Aplicación de temporizador Pomodoro desarrollada en Android con Kotlin y Jetpack Compose.  
-**Este es el primer proyecto de** [Felipe Torres](https://github.com/Felipe-TC) y **Yanara Tranamil**,  
+**Este es el primer proyecto de** [Felipe Torres C.](https://github.com/Felipe-TC) y [Yanara Tranamil M.](https://github.com/yanaraluz),  
 dando los primeros pasos para crear la marca **Huella Digital** 🇨🇱✨
 
 ---
