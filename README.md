@@ -13,7 +13,7 @@ Aplicación de temporizador Pomodoro desarrollada en Android con Kotlin y Jetpac
 
 ## 📸 Capturas de pantalla
 
-*(Agrega aquí imágenes de la app funcionando)*
+![Pantalla principal del PomodoroApp](assets/images/Screenshot_20260315-230837.png)
 
 ## 🚀 Cómo compilar y ejecutar
 
