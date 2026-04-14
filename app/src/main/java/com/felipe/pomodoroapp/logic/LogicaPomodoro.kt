@@ -1,11 +1,6 @@
-package com.felipe.pomodoroapp
+package com.felipe.pomodoroapp.logic
 
-// ===== ENUM (lo mismo) =====
-enum class EstadoPomodoro {
-    TRABAJO,            // Trabajo (25 min)
-    DESCANSO_CORTO,     // Descanso corto (5 min)
-    DESCANSO_LARGO,     // Descanso largo (15 min)
-}
+import com.felipe.pomodoroapp.model.EstadoPomodoro   // ← Importante
 
 // ===== CLASE CON PURA LOGICA =====
 class LogicaPomodoro {
@@ -97,6 +92,7 @@ class LogicaPomodoro {
             EstadoPomodoro.TRABAJO -> minutosTrabajo * 60
             EstadoPomodoro.DESCANSO_CORTO -> minutosDescansoCorto * 60
             EstadoPomodoro.DESCANSO_LARGO -> minutosDescansoLargo * 60
+            else -> throw IllegalArgumentException("Estado no valido")
         }
     }
 
