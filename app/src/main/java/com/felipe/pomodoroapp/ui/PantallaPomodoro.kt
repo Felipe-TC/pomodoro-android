@@ -282,6 +282,67 @@ fun PantallaPomodoro() {
             Text("Reiniciar todo (contador a 0)")
         }
 
+        // ===== BOTONES PARA CAMBIAR MANUALMENTE DE MODO =====
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(
+                onClick = {
+                    logicaPomodoro.cambiarAModoTrabajo()
+                    estaCorriendoUI = logicaPomodoro.estaCorriendo
+                    tiempoRestanteUI = logicaPomodoro.tiempoRestanteSegundos
+                    estadoActualUI = logicaPomodoro.estadoActual
+                    // Opcional: si quieres que al cambiar manualmente también se oculte el mensaje de tiempo terminado
+                    tiempoTerminadoEventoUI = false
+                },
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            ) {
+                Text("🍅 Trabajo", fontSize = 14.sp)
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Button(
+                onClick = {
+                    logicaPomodoro.cambiarAModoDescansoCorto()
+                    estaCorriendoUI = logicaPomodoro.estaCorriendo
+                    tiempoRestanteUI = logicaPomodoro.tiempoRestanteSegundos
+                    estadoActualUI = logicaPomodoro.estadoActual
+                    tiempoTerminadoEventoUI = false
+                },
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                )
+            ) {
+                Text("☕ Descanso corto", fontSize = 14.sp)
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Button(
+                onClick = {
+                    logicaPomodoro.cambiarAModoDescansoLargo()
+                    estaCorriendoUI = logicaPomodoro.estaCorriendo
+                    tiempoRestanteUI = logicaPomodoro.tiempoRestanteSegundos
+                    estadoActualUI = logicaPomodoro.estadoActual
+                    tiempoTerminadoEventoUI = false
+                },
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                )
+            ) {
+                Text("🌿 Descanso largo", fontSize = 14.sp)
+            }
+        }
+
         // ===== NUEVO: Botón para probar el sonido manualmente =====
         Spacer(modifier = Modifier.height(16.dp))
 
