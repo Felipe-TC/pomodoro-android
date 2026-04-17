@@ -21,7 +21,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,6 +34,7 @@ import com.felipe.pomodoroapp.logic.LogicaPomodoro
 import com.felipe.pomodoroapp.model.EstadoPomodoro
 import com.felipe.pomodoroapp.utils.formateoTiempo
 import kotlinx.coroutines.delay
+import com.felipe.pomodoroapp.R
 
 // ===== PANTALLA PRINCIPAL =====
 @Composable
@@ -65,7 +65,7 @@ fun PantallaPomodoro() {
             // MediaPlayer.create() puede devolver null si hay error
             val reproductorTemporal = MediaPlayer.create(
                 contextoAndroid,
-                android.provider.Settings.System.DEFAULT_NOTIFICATION_URI
+                R.raw.ahhputaquericoeh
             )
 
             if (reproductorTemporal == null) {
