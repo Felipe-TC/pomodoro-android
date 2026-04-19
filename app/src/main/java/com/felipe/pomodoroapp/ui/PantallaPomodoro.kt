@@ -35,6 +35,11 @@ import com.felipe.pomodoroapp.model.EstadoPomodoro
 import com.felipe.pomodoroapp.utils.formateoTiempo
 import kotlinx.coroutines.delay
 import com.felipe.pomodoroapp.R
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarDuration
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
 
 // ===== PANTALLA PRINCIPAL =====
 @Composable
@@ -79,6 +84,9 @@ fun PantallaPomodoro() {
             null    // Devolver null en caso de excepcion
         }
     }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     // 3. SINCRONIZAR LOGICA CON UI (cada segundo)
     // MODIFICAR este bloque para agregar manejo de sonido
@@ -128,6 +136,18 @@ fun PantallaPomodoro() {
                         println("ERROR al reproducir sonido: ${excepcion.message}")
                     }
 
+                    // ===== NUEVO: SNACKBAR AL TERMINAR EL TIEMPO =====
+                    val mensajeSnack = when (estadoActualUI) {
+                        EstadoPomodoro.TRABAJO -> "¡Pomodoro completado! 🍅"
+                        EstadoPomodoro.DESCANSO_CORTO -> "Descanso corto terminado ☕"
+                        EstadoPomodoro.DESCANSO_LARGO -> "Descanso largo terminado 🌿"
+                        else -> "Tiempo terminado"
+                    }
+                    snackbarHostState.showSnackbar(
+                        message = mensajeSnack,
+                        duration = SnackbarDuration.Short
+                    )
+
                     // ===== IMPORTANTE: Resetear el evento en la logica =====
                     logicaPomodoro.resetearEventoTiempoTerminado()
                 }
@@ -166,6 +186,7 @@ fun PantallaPomodoro() {
     } else {
         ""
     }
+
 
     // 5. CREAR LA INTERFAZ (UI) - MODIFICADA para mostrar el mensaje
     Column(
@@ -230,7 +251,7 @@ fun PantallaPomodoro() {
                     estaCorriendoUI = logicaPomodoro.estaCorriendo
                     tiempoRestanteUI = logicaPomodoro.tiempoRestanteSegundos
 
-                    // ===== NUEVO: Ocultar mensaje de tiempo temrinado si esta visible =====
+                    // ===== NUEVO: Ocultar mensaje de tiempo terminado si esta visible =====
                     if (tiempoTerminadoEventoUI) {
                         tiempoTerminadoEventoUI = false
                     }
@@ -297,6 +318,14 @@ fun PantallaPomodoro() {
                     estadoActualUI = logicaPomodoro.estadoActual
                     // Opcional: si quieres que al cambiar manualmente también se oculte el mensaje de tiempo terminado
                     tiempoTerminadoEventoUI = false
+
+                    // Aviso de cambio a Trabajo
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Modo cambiado a Trabajo",
+                            duration = SnackbarDuration.Short
+                        )
+                    }
                 },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
@@ -315,6 +344,14 @@ fun PantallaPomodoro() {
                     tiempoRestanteUI = logicaPomodoro.tiempoRestanteSegundos
                     estadoActualUI = logicaPomodoro.estadoActual
                     tiempoTerminadoEventoUI = false
+
+                    // Aviso de cambio a Trabajo
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Modo cambiado a Descanso corto",
+                            duration = SnackbarDuration.Short
+                        )
+                    }
                 },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
@@ -333,6 +370,14 @@ fun PantallaPomodoro() {
                     tiempoRestanteUI = logicaPomodoro.tiempoRestanteSegundos
                     estadoActualUI = logicaPomodoro.estadoActual
                     tiempoTerminadoEventoUI = false
+
+                    // Aviso de cambio a Trabajo
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Modo cambiado a Descanso largo",
+                            duration = SnackbarDuration.Short
+                        )
+                    }
                 },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
@@ -370,5 +415,6 @@ fun PantallaPomodoro() {
         ) {
             Text("🔊 Probar sonido")
         }
+        SnackbarHost(hostState = snackbarHostState)
     }
 }
