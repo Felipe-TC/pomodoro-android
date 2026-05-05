@@ -45,7 +45,14 @@ android {
 dependencies {
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("androidx.activity:activity-compose:1.10.1")
+
+    // Libreria que guarda los valores aunque cierres la app
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    // Navigation (moviemiento entre pantallas)
+    implementation("androidx.navigation:navigation-compose:2.8.9")
 
     // BOM de Compose (administra las versiones automáticamente)
     implementation(platform("androidx.compose:compose-bom:2025.02.00"))

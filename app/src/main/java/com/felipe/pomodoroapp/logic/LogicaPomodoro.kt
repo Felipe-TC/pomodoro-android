@@ -3,11 +3,15 @@ package com.felipe.pomodoroapp.logic
 import com.felipe.pomodoroapp.model.EstadoPomodoro   // ← Importante
 
 // ===== CLASE CON PURA LOGICA =====
-class LogicaPomodoro {
+class LogicaPomodoro(
+    minutosTrabajoInicial: Int = 25,
+    minutosDescansoCortoInicial: Int = 5,
+    minutosDescansoLargoInicial: Int = 15
+) {
     // ===== CONSTANTES (no cambian) =====
-    val minutosTrabajo: Int = 25
-    val minutosDescansoCorto: Int = 5
-    val minutosDescansoLargo: Int = 15
+    val minutosTrabajo: Int = minutosTrabajoInicial
+    val minutosDescansoCorto: Int = minutosDescansoCortoInicial
+    val minutosDescansoLargo: Int = minutosDescansoLargoInicial
 
     // ===== VARIABLES DE LOGICA (cambian, pero son NORMALES) =====
     var estadoActual: EstadoPomodoro = EstadoPomodoro.TRABAJO

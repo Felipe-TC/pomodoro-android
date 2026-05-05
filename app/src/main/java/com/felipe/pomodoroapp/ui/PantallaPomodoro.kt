@@ -40,17 +40,30 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarDuration
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.felipe.pomodoroapp.model.ConfiguracionViewModel
+import androidx.compose.runtime.collectAsState
 
 // ===== PANTALLA PRINCIPAL =====
 @Composable
-fun PantallaPomodoro() {
+fun PantallaPomodoro(
+    onNavigateToConfiguracion: () -> Unit
+) {
     // ===== NUEVO: Obtener el contexto de Android =====
     // Necesario para crear el MediaPlayer que reproduce sonido
-    val contextoAndroid: Context = LocalContext.current
+    val contextoAndroid = LocalContext.current
+    val configViewModel: ConfiguracionViewModel = viewModel()
+    val config by configViewModel.configuracion.collectAsState()
 
     // 1. CREAR INSTANCIA de la logica
     // remember: Guarda el objeto entre re-dibujados de la pantalla
-    val logicaPomodoro = remember { LogicaPomodoro() }
+    val logicaPomodoro = remember(config.minutosTrabajo, config.minutosDescansoCorto, config.minutosDescansoLargo) {
+        LogicaPomodoro(
+            minutosTrabajoInicial = config.minutosTrabajo,
+            minutosDescansoCortoInicial = config.minutosDescansoCorto,
+            minutosDescansoLargoInicial = config.minutosDescansoLargo
+        )
+    }
 
 
     // 2. CREAR VARIABLES DE ESTADO para la UI
@@ -236,6 +249,20 @@ fun PantallaPomodoro() {
         Spacer(modifier = Modifier.height(48.dp))
 
         // ===== BOTONES PRINCIPALES =====
+        // Boton de configuracion (arriba a la derecha)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Button(
+                onClick = onNavigateToConfiguracion,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary
+                )
+            ) {
+                Text("⚙\uFE0F Configuración")
+            }
+        }
         // MODIFICAR los onClick para resetear el mensaje de tiempo terminado
         Row(
             modifier = Modifier.fillMaxWidth(),
