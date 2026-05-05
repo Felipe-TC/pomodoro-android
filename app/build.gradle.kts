@@ -12,8 +12,8 @@ android {
         applicationId = "com.felipe.pomodoroapp"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2     // Aumenta en 1 cada vez que subes un APK
+        versionName = "1.1.0"   // Visible para usuarios
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
